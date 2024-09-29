@@ -1,8 +1,11 @@
+import os
+import glob
+
 # Get the directory of the script
-$scriptDir = $PSScriptRoot
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Define the file extensions to clean up
-$extensions = @(
+extensions = [
     "*.o",        # Object files (Linux/Unix)
     "*.obj",      # Object files (Windows)
     "*.exe",      # Executable files (Windows)
@@ -21,23 +24,19 @@ $extensions = @(
     "*.a",        # Archive files (Linux/Unix static libraries)
     "*.lib",      # Static library files (Windows)
     "*.dll"       # Dynamic library files (Windows)
-)
+]
 
 # Recursively find and delete each type of file
-foreach ($ext in $extensions) {
+for ext in extensions:
     # Find all files matching the current extension in the script directory and subdirectories
-    $files = Get-ChildItem -Path $scriptDir -Filter $ext -Recurse -File -ErrorAction SilentlyContinue
-
+    files = glob.glob(os.path.join(script_dir, '**', ext), recursive=True)
+    
     # Check if files exist and delete them
-    foreach ($file in $files) {
-        try {
-            Remove-Item -Path $file.FullName -Force
-            Write-Host "Deleted: $($file.FullName)"
-        }
-        catch {
-            Write-Warning "Could not delete: $($file.FullName)"
-        }
-    }
-}
+    for file in files:
+        try:
+            os.remove(file)
+            print(f"Deleted: {file}")
+        except Exception as e:
+            print(f"Could not delete: {file}. Error: {e}")
 
-Write-Host "Cleanup complete."
+print("Cleanup complete.")
