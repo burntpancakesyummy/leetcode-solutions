@@ -3,15 +3,22 @@
  *
  * [2696] Minimum String Length After Removing Substrings
  * 
+ * Approach 1: String Replace
  * 1541/1541 cases passed (12 ms)
  * Your runtime beats 15.77 % of cpp submissions
  * Your memory usage beats 99.28 % of cpp submissions (9.8 MB)
+ * 
+ * Approach 2: Stack
+ * 1541/1541 cases passed (5 ms)
+ * Your runtime beats 59.38 % of cpp submissions
+ * Your memory usage beats 61.24 % of cpp submissions (11.6 MB)
  */
 
 #include <iostream>
 #include <string>
 #include <vector>
 #include <tuple>
+#include <stack>
 
 using namespace std;
 
@@ -19,22 +26,33 @@ using namespace std;
 class Solution {
 public:
     int minLength(string s) {
-        // Create some variables to store the indices of "AB" and "CD"
-        size_t ab, cd = string::npos;
-        
-        // Remove "AB" and "CD" from the string in a loop until no more occurrences are found
-        do {
-            // Find and remove "AB"
-            ab = s.find("AB");
-            if (ab != string::npos) s.erase(ab, 2);
-            
-            // Find and remove "CD"
-            cd = s.find("CD");
-            if (cd != string::npos) s.erase(cd, 2);
-        } while (ab != string::npos || cd != string::npos);
+        stack<char> stack;
 
-        // Return the length of the remaining string
-        return s.length();
+        // Iterate over each character in the input string
+        for (int i = 0; i < s.size(); i++) {
+            char currentChar = s[i];
+
+            // If the stack is empty, simply push the current character
+            if (stack.empty()) {
+                stack.push(currentChar);
+                continue;
+            }
+
+            // Check for "AB" pattern, remove the pair by popping from the stack
+            if (currentChar == 'B' && stack.top() == 'A') {
+                stack.pop();
+            }
+            // Check for "CD" pattern, remove the pair by popping from the stack
+            else if (currentChar == 'D' && stack.top() == 'C') {
+                stack.pop();
+            }
+            // Otherwise, push the current character to the stack
+            else {
+                stack.push(currentChar);
+            }
+        }
+
+        return stack.size();
     }
 };
 // @lc code=end
