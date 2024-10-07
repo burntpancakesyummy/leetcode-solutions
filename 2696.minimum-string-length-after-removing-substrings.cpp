@@ -17,6 +17,11 @@
  * 1541/1541 cases passed (6 ms)
  * Your runtime beats 57.32 % of cpp submissions
  * Your memory usage beats 93.92 % of cpp submissions (10 MB)
+ * 
+ * Approach 3: In Place Modification (with iterators)
+ * 1541/1541 cases passed (0 ms)
+ * Your runtime beats 100 % of cpp submissions
+ * Your memory usage beats 93.92 % of cpp submissions (10.1 MB)
  */
 
 #include <iostream>
@@ -31,18 +36,18 @@ using namespace std;
 class Solution {
 public:
     int minLength(string s) {
-        int writePtr = 0;
+        auto writePtr = s.begin();
 
         // Iterate over each character in the string
-        for (int readPtr = 0; readPtr < s.size(); ++readPtr) {
+        for (auto readPtr = s.begin(); readPtr != s.end(); ++readPtr) {
             // Write the current character to the write position
-            s[writePtr] = s[readPtr];
+            *writePtr = *readPtr;
 
             // Check if we have a valid pattern to remove
             if (
-                writePtr > 0 &&
-                (s[writePtr - 1] == 'A' || s[writePtr - 1] == 'C') &&
-                s[writePtr] == s[writePtr - 1] + 1
+                writePtr > s.begin() &&
+                ((*writePtr - 1) == 'A' || (*writePtr - 1) == 'C') &&
+                *writePtr == *(writePtr - 1) + 1
             ) {
                 --writePtr;
             } else {
@@ -51,7 +56,7 @@ public:
         }
 
         // Calculate the length of the remaining string
-        return writePtr;
+        return static_cast<int>(writePtr - s.begin());
     }
 };
 // @lc code=end
