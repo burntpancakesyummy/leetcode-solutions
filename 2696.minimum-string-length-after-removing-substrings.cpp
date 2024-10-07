@@ -12,6 +12,11 @@
  * 1541/1541 cases passed (5 ms)
  * Your runtime beats 59.38 % of cpp submissions
  * Your memory usage beats 61.24 % of cpp submissions (11.6 MB)
+ * 
+ * Approach 3: In Place Modification (with indexes)
+ * 1541/1541 cases passed (6 ms)
+ * Your runtime beats 57.32 % of cpp submissions
+ * Your memory usage beats 93.92 % of cpp submissions (10 MB)
  */
 
 #include <iostream>
@@ -26,33 +31,27 @@ using namespace std;
 class Solution {
 public:
     int minLength(string s) {
-        stack<char> stack;
+        int writePtr = 0;
 
-        // Iterate over each character in the input string
-        for (int i = 0; i < s.size(); i++) {
-            char currentChar = s[i];
+        // Iterate over each character in the string
+        for (int readPtr = 0; readPtr < s.size(); ++readPtr) {
+            // Write the current character to the write position
+            s[writePtr] = s[readPtr];
 
-            // If the stack is empty, simply push the current character
-            if (stack.empty()) {
-                stack.push(currentChar);
-                continue;
-            }
-
-            // Check for "AB" pattern, remove the pair by popping from the stack
-            if (currentChar == 'B' && stack.top() == 'A') {
-                stack.pop();
-            }
-            // Check for "CD" pattern, remove the pair by popping from the stack
-            else if (currentChar == 'D' && stack.top() == 'C') {
-                stack.pop();
-            }
-            // Otherwise, push the current character to the stack
-            else {
-                stack.push(currentChar);
+            // Check if we have a valid pattern to remove
+            if (
+                writePtr > 0 &&
+                (s[writePtr - 1] == 'A' || s[writePtr - 1] == 'C') &&
+                s[writePtr] == s[writePtr - 1] + 1
+            ) {
+                --writePtr;
+            } else {
+                ++writePtr; // No match, so move the write pointer forward
             }
         }
 
-        return stack.size();
+        // Calculate the length of the remaining string
+        return writePtr;
     }
 };
 // @lc code=end
